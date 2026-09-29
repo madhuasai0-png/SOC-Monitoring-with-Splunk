@@ -296,17 +296,12 @@ A controlled incorrect-password attempt was performed on the Windows VM to gener
 
 The following techniques were mapped based on activities actually performed in the lab.
 
-| Activity              | MITRE ATT\&CK Technique            |
-
-| --------------------- | --------------------------------- |
-
-| PowerShell execution  | T1059.001 – PowerShell            |
-
+| Activity | MITRE ATT&CK Technique |
+| --- | --- |
+| PowerShell execution | T1059.001 – PowerShell |
 | Windows Command Shell | T1059.003 – Windows Command Shell |
-
-| Nmap network scanning | T1046 – Network Service Scanning  |
-
-| SMB share enumeration | T1135 – Network Share Discovery   |
+| Nmap network scanning | T1046 – Network Service Scanning |
+| SMB share enumeration | T1135 – Network Share Discovery |
 
 Authentication events such as 4624 and 4625 were treated as security telemetry for investigation.
 
