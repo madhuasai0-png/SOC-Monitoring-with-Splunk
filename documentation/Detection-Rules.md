@@ -1,94 +1,50 @@
-\# Attack Simulation
+# Attack Simulation
 
-
-
-\## Overview
-
-
+## Overview
 
 This document describes the controlled security testing performed in the isolated Home SOC Lab.
 
-
-
 The testing was performed from the Kali Linux VM against the Windows 11 VM. The purpose was to generate realistic security telemetry and understand how common network discovery activities can be investigated.
-
-
 
 All testing was authorized and limited to the lab environment.
 
+## Lab Target
 
+Windows 11 VM: `192.168.56.101`
 
-\## Lab Target
+Testing Machine: Kali Linux VM
 
+## 1. Network Connectivity Test
 
-
-\*\*Windows 11 VM:\*\* `192.168.56.101`
-
-
-
-\*\*Testing Machine:\*\* Kali Linux VM
-
-
-
-\## 1. Network Connectivity Test
-
-
-
-\### Command
-
-
+### Command
 
 ```bash
 
 ping -c 4 192.168.56.101
 
 ```
-
-
-
-\### Result
-
-
+### Result
 
 The Windows 11 VM responded successfully to all four ICMP requests.
 
-
-
 This confirmed network connectivity between the Kali Linux and Windows 11 virtual machines.
 
+## 2. Network Service Discovery
 
-
-\## 2. Network Service Discovery
-
-
-
-\### Objective
-
-
+### Objective
 
 Identify TCP services exposed by the Windows 11 lab machine.
 
-
-
-\### Command
-
-
+### Command
 
 ```bash
 
 nmap -sT -Pn 192.168.56.101
 
 ```
-
-
-
-\### Observed Services
-
-
+### Observed Services
 
 The scan identified the following accessible TCP ports:
-
-
 
 ```text
 
@@ -105,116 +61,62 @@ The scan identified the following accessible TCP ports:
 8089/tcp
 
 ```
+### MITRE ATT\&CK
 
+T1046 — Network Service Scanning
 
-
-\### MITRE ATT\&CK
-
-
-
-\*\*T1046 — Network Service Scanning\*\*
-
-
-
-\### SOC Relevance
-
-
+### SOC Relevance
 
 Network service scanning can provide information about services exposed by an endpoint. In an enterprise environment, unexpected scanning activity may require investigation.
 
+## 3. SMB Share Enumeration
 
-
-\## 3. SMB Share Enumeration
-
-
-
-\### Objective
-
-
+### Objective
 
 Test whether SMB shares could be enumerated anonymously.
 
-
-
-\### Command
-
-
+### Command
 
 ```bash
 
 smbclient -L //192.168.56.101 -N
 
 ```
-
-
-
-\### Result
-
-
+### Result
 
 The Windows 11 host returned:
-
-
 
 ```text
 
 NT\_STATUS\_ACCESS\_DENIED
 
 ```
-
-
-
 Anonymous SMB share access was therefore denied.
 
+### MITRE ATT\&CK
 
+T1135 — Network Share Discovery
 
-\### MITRE ATT\&CK
-
-
-
-\*\*T1135 — Network Share Discovery\*\*
-
-
-
-\### SOC Relevance
-
-
+### SOC Relevance
 
 SMB share enumeration can reveal information about network resources. Even when access is denied, the attempted activity can be relevant during security investigation.
 
+## 4. SMB Protocol Enumeration
 
-
-\## 4. SMB Protocol Enumeration
-
-
-
-\### Objective
-
-
+### Objective
 
 Identify the SMB protocol versions supported by the Windows 11 host.
 
-
-
-\### Command
-
-
+### Command
 
 ```bash
 
 nmap -p 445 --script smb-protocols 192.168.56.101
 
 ```
-
-
-
-\### Observed SMB Dialects
-
-
+### Observed SMB Dialects
 
 The following SMB dialects were observed:
-
-
 
 ```text
 
@@ -229,48 +131,26 @@ SMB 3.0.2
 SMB 3.1.1
 
 ```
-
-
-
-\### SOC Relevance
-
-
+### SOC Relevance
 
 Protocol enumeration provides additional information about the configuration of a network service and can be useful during authorized security assessment.
 
+## 5. Splunk HTTP Service Verification
 
-
-\## 5. Splunk HTTP Service Verification
-
-
-
-\### Objective
-
-
+### Objective
 
 Verify that the Splunk Web service running on the Windows 11 VM was reachable from Kali Linux.
 
-
-
-\### Command
-
-
+### Command
 
 ```bash
 
 curl -I http://192.168.56.101:8000
 
 ```
-
-
-
-\### Result
-
-
+### Result
 
 The HTTP request returned a `303` redirect to:
-
-
 
 ```text
 
@@ -278,225 +158,121 @@ The HTTP request returned a `303` redirect to:
 
 ```
 
-
-
 This confirmed that the Splunk Web service was reachable from the Kali Linux VM.
 
-
-
-\### SOC Relevance
-
-
+### SOC Relevance
 
 This test demonstrated that services running on the monitored endpoint can be accessed from another system on the lab network.
 
+## 6. PowerShell Activity Simulation
 
-
-\## 6. PowerShell Activity Simulation
-
-
-
-\### Objective
-
-
+### Objective
 
 Generate normal PowerShell process activity so that Sysmon could record process creation telemetry.
 
-
-
-\### Test
-
-
+### Test
 
 A PowerShell command was executed on the Windows 11 VM:
-
-
 
 ```powershell
 
 Write-Host "SOC Detection Test"
 
 ```
-
-
-
-\### Observation
-
-
+### Observation
 
 The command executed successfully.
 
-
-
 The PowerShell process itself was visible through Sysmon Process Creation telemetry.
 
-
-
-\### Important Note
-
-
+### Important Note
 
 The text printed by `Write-Host` does not create a separate process event. Therefore, searching specifically for the string `SOC Detection Test` in a Sysmon Process Creation event did not produce a separate matching process event.
 
-
-
 The PowerShell process activity itself was successfully observed.
 
+### MITRE ATT\&CK
 
+T1059.001 — PowerShell
 
-\### MITRE ATT\&CK
+## 7. Windows Command Shell Activity Simulation
 
-
-
-\*\*T1059.001 — PowerShell\*\*
-
-
-
-\## 7. Windows Command Shell Activity Simulation
-
-
-
-\### Objective
-
-
+### Objective
 
 Generate CMD process activity and verify that it could be detected using Sysmon.
 
-
-
-\### Command
-
-
+### Command
 
 ```cmd
 
 echo SOC\_CMD\_TEST
 
 ```
-
-
-
-\### Observation
-
-
+### Observation
 
 The CMD process activity was captured by Sysmon Process Creation telemetry and was visible through Splunk.
 
+### MITRE ATT\&CK
 
+T1059.003 — Windows Command Shell
 
-\### MITRE ATT\&CK
+## 8. Controlled Failed Logon Test
 
-
-
-\*\*T1059.003 — Windows Command Shell\*\*
-
-
-
-\## 8. Controlled Failed Logon Test
-
-
-
-\### Objective
-
-
+### Objective
 
 Generate a controlled Windows failed-authentication event for investigation.
 
-
-
-\### Test Procedure
-
-
+### Test Procedure
 
 The Windows 11 VM was locked using the Windows lock-screen function.
 
-
-
 An incorrect password was entered once, followed by the correct password.
 
-
-
-\### Observed Event
-
-
+### Observed Event
 
 The failed authentication generated:
 
+Event ID 4625 — An account failed to log on
 
+The controlled interactive test produced a Logon Type 2 event.
 
-\*\*Event ID 4625 — An account failed to log on\*\*
+A separate network authentication event with Logon Type 3 was also observed during the lab testing.
 
-
-
-The controlled interactive test produced a \*\*Logon Type 2\*\* event.
-
-
-
-A separate network authentication event with \*\*Logon Type 3\*\* was also observed during the lab testing.
-
-
-
-\### Investigation
-
-
+### Investigation
 
 The events were investigated in Splunk using Windows Security logs.
 
-
-
 Relevant fields included:
 
+ Timestamp
 
+ Account
 
-\* Timestamp
+ Logon Type
 
-\* Account
+ Process
 
-\* Logon Type
+ Computer
 
-\* Process
+ Event Code
 
-\* Computer
-
-\* Event Code
-
-
-
-\### Important Limitation
-
-
+### Important Limitation
 
 Only a single controlled incorrect-password attempt was performed.
 
-
-
 Therefore, this activity was not classified as brute-force activity because repeated credential guessing was not performed.
 
+## 9. Successful Authentication Investigation
 
-
-\## 9. Successful Authentication Investigation
-
-
-
-\### Objective
-
-
+### Objective
 
 Investigate a successful Windows authentication event.
 
+### Event
 
-
-\### Event
-
-
-
-\*\*Event ID 4624 — An account was successfully logged on\*\*
-
-
+Event ID 4624 — An account was successfully logged on
 
 A service logon with the following details was observed during the investigation:
-
-
 
 ```text
 
@@ -508,199 +284,128 @@ Process: C:\\Windows\\System32\\services.exe
 
 ```
 
-
-
-\### SOC Relevance
-
-
+### SOC Relevance
 
 Authentication events provide useful information for understanding how accounts and services interact with a Windows endpoint.
 
-
-
-\## 10. Splunk Detection Verification
-
-
+## 10. Splunk Detection Verification
 
 The simulated activities were investigated using Splunk searches.
 
-
-
-\### Process Creation
-
-
+### Process Creation
 
 ```spl
 
 index=main sourcetype="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1
 
 ```
-
-
-
-\### PowerShell
-
-
+### PowerShell
 
 ```spl
 
 index=main sourcetype="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1 Image="\*powershell\*" | table \_time User ParentImage CommandLine
 
 ```
-
-
-
-\### CMD
-
-
+### CMD
 
 ```spl
 
 index=main sourcetype="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1 Image="\*cmd.exe\*"
 
 ```
-
-
-
-\### Authentication
-
-
+### Authentication
 
 ```spl
 
 index=main (EventCode=4624 OR EventCode=4625)
 
 ```
-
-
-
 These searches were used to investigate the telemetry generated during the lab activities.
 
-
-
-\## 11. MITRE ATT\&CK Mapping
-
-
+## 11. MITRE ATT\&CK Mapping
 
 The following activities were mapped to MITRE ATT\&CK techniques based on the behavior actually performed:
 
-
-
-| Activity              | MITRE ATT\&CK Technique   | ID        |
-
-| --------------------- | ------------------------ | --------- |
-
-| PowerShell execution  | PowerShell               | T1059.001 |
-
-| CMD execution         | Windows Command Shell    | T1059.003 |
-
-| Nmap scanning         | Network Service Scanning | T1046     |
-
-| SMB share enumeration | Network Share Discovery  | T1135     |
-
-
+| Activity | MITRE ATT&CK Technique | ID |
+| --- | --- | --- |
+| PowerShell execution | PowerShell | T1059.001 |
+| CMD execution | Windows Command Shell | T1059.003 |
+| Nmap scanning | Network Service Scanning | T1046 |
+| SMB share enumeration | Network Share Discovery | T1135 |
 
 The 4624 and 4625 authentication events were treated as authentication telemetry and investigation evidence.
 
-
-
 The single failed-password test was not mapped to Brute Force because repeated credential guessing was not performed.
 
-
-
-\## 12. Overall Investigation Flow
-
-
+## 12. Overall Investigation Flow
 
 The attack simulations followed this workflow:
-
-
 
 ```text
 
 Controlled Test
 
-&#x20;     ↓
+     ↓
 
 Windows Activity
 
-&#x20;     ↓
+     ↓
 
 Sysmon / Windows Event Logs
 
-&#x20;     ↓
+     ↓
 
 Splunk Ingestion
 
-&#x20;     ↓
+     ↓
 
 SPL Detection
 
-&#x20;     ↓
+     ↓
 
 Event Investigation
 
-&#x20;     ↓
+     ↓
 
 MITRE ATT\&CK Mapping
 
-&#x20;     ↓
+     ↓
 
 Documentation
 
 ```
 
-
-
 The purpose of the simulations was to understand how security-related activity becomes telemetry and how a SOC analyst can investigate that telemetry.
 
-
-
-\## 13. Safety and Scope
-
-
+## 13. Safety and Scope
 
 All testing was performed against the user's own virtual machines in an isolated lab environment.
 
-
-
 The project did not include:
 
+ Malware deployment
 
+ Credential theft
 
-\* Malware deployment
+ Persistence mechanisms
 
-\* Credential theft
+ Destructive attacks
 
-\* Persistence mechanisms
+ Data exfiltration
 
-\* Destructive attacks
+ Unauthorized systems
 
-\* Data exfiltration
-
-\* Unauthorized systems
-
-\* Real-world targets
-
-
+ Real-world targets
 
 The simulations were intentionally limited to safe network discovery, service enumeration, process activity, and controlled authentication testing.
 
-
-
-\## Conclusion
-
-
+## Conclusion
 
 The attack simulations provided practical examples of how network, process, and authentication activity can be generated and investigated in a SOC environment.
 
-
-
 The tests demonstrated the complete relationship between:
 
-
-
-\*\*Security Testing → Telemetry Collection → Detection → Investigation → MITRE ATT\&CK Mapping → Documentation\*\*
+Security Testing → Telemetry Collection → Detection → Investigation → MITRE ATT\&CK Mapping → Documentation
 
 
 
