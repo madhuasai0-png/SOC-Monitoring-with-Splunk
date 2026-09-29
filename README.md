@@ -79,23 +79,15 @@ MITRE ATT\&CK Mapping
 
 ## Technologies Used
 
- Technology                Purpose                             
-
+| Technology               | Purpose                             |
 | ------------------------ | ----------------------------------- |
-
 | Windows 11               | Monitored endpoint                  |
-
-| Splunk Enterprise 10.4.0 | SIEM and log analysis               |
-
+| Splunk Enterprise 10.4.4 | SIEM and log analysis               |
 | Sysmon                   | Windows security telemetry          |
-
 | Kali Linux               | Authorized security testing         |
-
 | VirtualBox               | Virtual lab environment             |
-
 | SPL                      | Detection and investigation queries |
-
-| MITRE ATT\&CK             | Technique mapping                   |
+| MITRE ATT&CK             | Technique mapping                   |
 
 ## Lab Architecture
 
