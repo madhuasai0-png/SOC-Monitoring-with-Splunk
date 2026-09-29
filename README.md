@@ -79,7 +79,7 @@ MITRE ATT\&CK Mapping
 
 ## Technologies Used
 
-| Technology               | Purpose                             |
+ Technology                Purpose                             
 
 | ------------------------ | ----------------------------------- |
 
