@@ -8,13 +8,13 @@ The queries were developed to search, detect, summarize, and investigate Windows
 
 The main data sources are:
 
-\* Sysmon Operational logs
+ Sysmon Operational logs
 
-\* Windows Security logs
+ Windows Security logs
 
-\* Process Creation events
+ Process Creation events
 
-\* Authentication events
+ Authentication events
 
 ## 1. All Sysmon Events
 
@@ -159,7 +159,7 @@ Processes that appear unexpectedly can be investigated further
 
 Analyze relationships between parent and child processes.
 
-\### SPL
+### SPL
 
 ```spl id="c6w3hs"
 
@@ -381,36 +381,21 @@ Document Finding
 ```
 ## 16. Query Reference
 
-| Query                      | Purpose                       | Main Data          |
-
-| -------------------------- | ----------------------------- | ------------------ |
-
-| All Sysmon Events          | View Sysmon telemetry         | Sysmon             |
-
-| Process Creation           | Monitor process creation      | Sysmon EventCode 1 |
-
-| PowerShell                 | Monitor PowerShell            | Sysmon             |
-
-| CMD                        | Monitor CMD                   | Sysmon             |
-
-| EventCode Statistics       | Analyze event distribution    | Sysmon             |
-
-| Process Frequency          | Identify common processes     | Sysmon             |
-
-| Parent-Child Analysis      | Analyze process relationships | Sysmon             |
-
-| Authentication Monitoring  | Monitor logons                | Security           |
-
-| Successful Logon           | Investigate 4624              | Security           |
-
-| Failed Logon               | Investigate 4625              | Security           |
-
-| Failed Logon Investigation | Analyze failed logons         | Security           |
-
-| Failed Logon Statistics    | Summarize failed logons       | Security           |
-
-| Main Process Investigation | Detailed process analysis     | Sysmon             |
-
+| Query | Purpose | Main Data |
+| --- | --- | --- |
+| All Sysmon Events | View Sysmon telemetry | Sysmon |
+| Process Creation | Monitor process creation | Sysmon EventCode 1 |
+| PowerShell | Monitor PowerShell | Sysmon |
+| CMD | Monitor CMD | Sysmon |
+| EventCode Statistics | Analyze event distribution | Sysmon |
+| Process Frequency | Identify common processes | Sysmon |
+| Parent-Child Analysis | Analyze process relationships | Sysmon |
+| Authentication Monitoring | Monitor logons | Security |
+| Successful Logon | Investigate 4624 | Security |
+| Failed Logon | Investigate 4625 | Security |
+| Failed Logon Investigation | Analyze failed logons | Security |
+| Failed Logon Statistics | Summarize failed logons | Security |
+| Main Process Investigation | Detailed process analysis | Sysmon |
 
 ## 17. Detection vs Investigation
 
@@ -464,7 +449,7 @@ Running these queries does not:
 
 The queries search and analyze telemetry that has already been collected.
 
-\## Conclusion
+## Conclusion
 
 The SPL queries in this project provide the detection and investigation layer of the Home SOC Lab.
 
