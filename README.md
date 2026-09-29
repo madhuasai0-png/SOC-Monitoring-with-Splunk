@@ -1,10 +1,10 @@
-\# Home SOC Monitoring Lab with Splunk
+# Home SOC Monitoring Lab with Splunk
 
 A hands-on Home Security Operations Center (SOC) monitoring lab built using Splunk Enterprise 10.4.0, Sysmon, Windows 11, Kali Linux, and VirtualBox.
 
 The project demonstrates how security telemetry can be collected from a Windows endpoint, analyzed using Splunk SPL queries, investigated as security events, and mapped to relevant MITRE ATT\&CK techniques.
 
-\##  Project Overview
+##  Project Overview
 
 This project simulates a basic SOC environment in a controlled virtual lab.
 
@@ -12,7 +12,7 @@ The Windows 11 virtual machine acts as the monitored endpoint. Sysmon collects d
 
 Kali Linux is used to perform authorized and controlled security-testing activities against the Windows lab environment.
 
-\## SOC Workflow
+## SOC Workflow
 
 ```text
 
@@ -51,33 +51,33 @@ Incident Response
 MITRE ATT\&CK Mapping
 
 ```
-\## Project Objectives
+## Project Objectives
 
-\* Collect Windows security and system telemetry.
+ Collect Windows security and system telemetry.
 
-\* Monitor Windows process creation.
+ Monitor Windows process creation.
 
-\* Monitor PowerShell activity.
+ Monitor PowerShell activity.
 
-\* Monitor Windows Command Shell activity.
+ Monitor Windows Command Shell activity.
 
-\* Monitor Windows authentication events.
+ Monitor Windows authentication events.
 
-\* Investigate successful and failed logon events.
+ Investigate successful and failed logon events.
 
-\* Perform controlled security testing using Kali Linux.
+ Perform controlled security testing using Kali Linux.
 
-\* Analyze security events using Splunk SPL.
+ Analyze security events using Splunk SPL.
 
-\* Build a SOC monitoring dashboard.
+ Build a SOC monitoring dashboard.
 
-\* Perform basic incident investigation and response.
+ Perform basic incident investigation and response.
 
-\* Map observed activities to MITRE ATT\&CK techniques.
+ Map observed activities to MITRE ATT\&CK techniques.
 
-\* Document the complete SOC workflow.
+ Document the complete SOC workflow.
 
-\## Technologies Used
+## Technologies Used
 
 | Technology               | Purpose                             |
 
@@ -97,7 +97,7 @@ MITRE ATT\&CK Mapping
 
 | MITRE ATT\&CK             | Technique mapping                   |
 
-\## Lab Architecture
+## Lab Architecture
 
 ```text
 
@@ -170,27 +170,27 @@ MITRE ATT\&CK Mapping
                    └─────────────────┘
 
 ```
-\## Monitoring \& Detection
+## Monitoring \& Detection
 
 The lab monitors several important Windows security activities.
 
-\### Process Creation
+### Process Creation
 
 Sysmon EventCode 1 is used to monitor process creation events.
 
 Important fields include:
 
-\* Timestamp
+ Timestamp
 
-\* User
+ User
 
-\* Process Image
+ Process Image
 
-\* Parent Process
+ Parent Process
 
-\* Command Line
+ Command Line
 
-\### PowerShell Monitoring
+### PowerShell Monitoring
 
 PowerShell process activity is monitored using Sysmon telemetry and SPL queries.
 
@@ -203,7 +203,7 @@ index=main sourcetype="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCo
 | table \_time User ParentImage CommandLine
 
 ```
-\### CMD Monitoring
+### CMD Monitoring
 
 Windows Command Shell activity is monitored using Sysmon Process Creation events.
 
@@ -212,44 +212,44 @@ Windows Command Shell activity is monitored using Sysmon Process Creation events
 index=main sourcetype="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1 Image="\*cmd.exe\*"
 
 ```
-\### Authentication Monitoring
+### Authentication Monitoring
 
 Windows Security Event IDs are monitored:
 
-\* `4624` → Successful logon
+ `4624` → Successful logon
 
-\* `4625` → Failed logon
+ `4625` → Failed logon
 
 These events are investigated using account, logon type, process, and other available event fields.
 
-\## SOC Monitoring Dashboard
+## SOC Monitoring Dashboard
 
 A Splunk dashboard named `SOC Monitoring Dashboard` was created to provide centralized visibility into Windows security telemetry.
 
 The dashboard includes monitoring panels for:
 
-\* PowerShell Process Monitoring
+ PowerShell Process Monitoring
 
-\* CMD Process Monitoring
+ CMD Process Monitoring
 
-\* Process Creation Monitoring
+ Process Creation Monitoring
 
-\* Sysmon EventCode Monitoring
+ Sysmon EventCode Monitoring
 
 The dashboard provides a quick way for an analyst to review relevant security activity without manually running every query.
 
-\## Controlled Security Testing
+## Controlled Security Testing
 
 Security testing was performed only inside the authorized virtual lab environment.
 
-\### Network Connectivity Test
+### Network Connectivity Test
 
 ```bash
 
 ping -c 4 192.168.56.101
 
 ```
-\### Network Service Scanning
+### Network Service Scanning
 
 ```bash
 
@@ -259,7 +259,7 @@ nmap -sT -Pn 192.168.56.101
 
 The scan identified services exposed by the Windows lab machine.
 
-\### SMB Share Enumeration
+### SMB Share Enumeration
 
 ```bash
 
@@ -268,39 +268,39 @@ smbclient -L //192.168.56.101 -N
 ```
 Anonymous SMB access was denied by the Windows environment.
 
-\### SMB Protocol Enumeration
+### SMB Protocol Enumeration
 
 ```bash
 
 nmap -p 445 --script smb-protocols 192.168.56.101
 
 ```
-\### Splunk HTTP Verification
+### Splunk HTTP Verification
 
 ```bash
 
 curl -I http://192.168.56.101:8000
 
 ```
-\### PowerShell Detection Test
+### PowerShell Detection Test
 
 ```powershell
 
 Write-Host "SOC Detection Test"
 
 ```
-\### CMD Detection Test
+### CMD Detection Test
 
 ```cmd
 
 echo SOC\_CMD\_TEST
 
 ```
-\### Authentication Test
+### Authentication Test
 
 A controlled incorrect-password attempt was performed on the Windows VM to generate a 4625 failed logon event, followed by a successful login.
 
-\## MITRE ATT\&CK Mapping
+## MITRE ATT\&CK Mapping
 
 The following techniques were mapped based on activities actually performed in the lab.
 
@@ -320,7 +320,7 @@ Authentication events such as 4624 and 4625 were treated as security telemetry f
 
 The single controlled failed-login test was not classified as brute-force activity.
 
-\## Incident Response Workflow
+## Incident Response Workflow
 
 The project follows a basic SOC incident-response workflow:
 
@@ -345,41 +345,41 @@ The project follows a basic SOC incident-response workflow:
 5\. Document
 
 ```
-\### Identify
+### Identify
 
 Detect potentially relevant activity using Splunk searches.
 
-\### Investigate
+### Investigate
 
 Review:
 
-\* Timestamp
+ Timestamp
 
-\* User
+ User
 
-\* Process
+ Process
 
-\* Parent Process
+ Parent Process
 
-\* Command Line
+ Command Line
 
-\* EventCode
+ EventCode
 
-\* Logon Type
+ Logon Type
 
-\### Validate
+### Validate
 
 Determine whether the activity is expected, controlled testing, or potentially suspicious.
 
-\### Respond
+### Respond
 
 Document the activity and determine appropriate response actions within the lab environment.
 
-\### Document
+### Document
 
 Record findings, evidence, detection queries, and MITRE ATT\&CK mappings.
 
-\## Detection vs Alerting
+## Detection vs Alerting
 
 This project demonstrates detection and investigation using Splunk SPL.
 
@@ -408,7 +408,7 @@ Automated alert creation was not enabled in the current Splunk Free lab environm
 
 Therefore, this project does not claim automated alerting or notification functionality.
 
-\## Project Structure
+## Project Structure
 
 ```text
 
@@ -463,27 +463,27 @@ SOC-Monitoring-with-Splunk/
 └── Screenshot/
 
 ```
-\## Security \& Lab Scope
+## Security \& Lab Scope
 
 All testing was performed in an isolated and authorized virtual environment.
 
 The project does not involve:
 
-\* Unauthorized systems
+ Unauthorized systems
 
-\* Malware deployment
+ Malware deployment
+ 
+ Credential theft
 
-\* Credential theft
+ Destructive attacks
 
-\* Destructive attacks
+ Data exfiltration
 
-\* Data exfiltration
-
-\* Persistence against real systems
+ Persistence against real systems
 
 The Kali Linux activities were limited to controlled security-testing exercises against the Windows lab VM.
 
-\## Screenshots
+## Screenshots
 
 Screenshots documenting the Splunk dashboard, detections, investigations, and lab activities are available in the:
 
@@ -494,41 +494,41 @@ Screenshot/
 ```
 directory.
 
-\## Documentation
+## Documentation
 
 Detailed documentation is available in the following directories:
 
-\* `Config/` → Environment and configuration documentation
+ `Config/` → Environment and configuration documentation
 
-\* `Dashboard/` → Splunk dashboard documentation
+ `Dashboard/` → Splunk dashboard documentation
 
-\* `Documentation/` → Project, architecture, detection, attack simulation, incident response, and MITRE documentation
+ `Documentation/` → Project, architecture, detection, attack simulation, incident response, and MITRE documentation
 
-\* `Queries/` → Splunk SPL detection and investigation queries
+ `Queries/` → Splunk SPL detection and investigation queries
 
-\* `Screenshot/` → Project evidence and screenshots
+ `Screenshot/` → Project evidence and screenshots
 
-\## Future Improvements
+## Future Improvements
 
 Possible future enhancements include:
 
-\* Automated alerting and notification
+ Automated alerting and notification
 
-\* Additional Sysmon event monitoring
+ Additional Sysmon event monitoring
 
-\* More Windows authentication detections
+ More Windows authentication detections
 
-\* Additional MITRE ATT\&CK mappings
+ Additional MITRE ATT\&CK mappings
 
-\* More advanced correlation rules
+ More advanced correlation rules
 
-\* Linux log monitoring
+ Linux log monitoring
 
-\* Threat-intelligence integration
+ Threat-intelligence integration
 
-\* Automated incident-response workflows
+ Automated incident-response workflows
 
-\## Project Outcome
+## Project Outcome
 
 This Home SOC project demonstrates a practical security-monitoring workflow:
 
@@ -567,9 +567,9 @@ Map to MITRE ATT\&CK
 ```
 The project provides hands-on experience with SIEM monitoring, Windows telemetry, Sysmon, SPL detection, security investigation, controlled attack simulation, incident response, and MITRE ATT\&CK mapping.
 
-\## Author
+## Author
 
-\*\*Cybersecurity Student | Aspiring SOC Analyst\*\*
+Cybersecurity Student | Aspiring SOC Analyst
 
 
 
