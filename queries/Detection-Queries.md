@@ -1,6 +1,6 @@
-\# Detection Queries
+# Detection Queries
 
-\## Overview
+## Overview
 
 This document contains the Splunk SPL queries used in the Home SOC Monitoring Lab.
 
@@ -16,113 +16,113 @@ The main data sources are:
 
 \* Authentication events
 
-\## 1. All Sysmon Events
+## 1. All Sysmon Events
 
-\### Purpose
+### Purpose
 
 View Sysmon events collected by Splunk.
 
-\### SPL
+### SPL
 
 ```spl id="a8f2kd"
 
 index=main sourcetype="WinEventLog:Microsoft-Windows-Sysmon/Operational"
 
 ```
-\### Use
+### Use
 
 This query provides a general view of the Sysmon telemetry available in Splunk.
 
-\## 2. Sysmon Process Creation
+## 2. Sysmon Process Creation
 
-\### Purpose
+### Purpose
 
 Search for Sysmon Process Creation events.
 
-\### SPL
+### SPL
 
 ```spl id="m7q4vx"
 
 index=main sourcetype="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1
 
 ```
-\### Event
+## Event
 
-\*\*Sysmon EventCode 1 — Process Creation\*\*
+Sysmon EventCode 1 — Process Creation
 
-\### Important Fields
+### Important Fields
 
-\* `\_time`
+ `_time`
 
-\* `User`
+ `User`
 
-\* `Image`
+ `Image`
 
-\* `ParentImage`
+ `ParentImage`
 
-\* `CommandLine`
+ `CommandLine`
 
-\* `EventCode`
+ `EventCode`
 
-\## 3. PowerShell Process Monitoring
+## 3. PowerShell Process Monitoring
 
-\### Purpose
+### Purpose
 
 Identify PowerShell process activity.
 
-\### SPL
+### SPL
 
 ```spl id="r5n8tc"
 
 index=main sourcetype="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1 Image="\*powershell\*" | table \_time User ParentImage CommandLine
 
 ```
-\### MITRE ATT\&CK
+### MITRE ATT\&CK
 
-\*\*T1059.001 — PowerShell\*\*
+T1059.001 — PowerShell
 
-\### Investigation
+### Investigation
 
 The results can be investigated using:
 
-\* Timestamp
+ Timestamp
 
-\* User
+ User
 
-\* Parent process
+ Parent process
 
-\* Process image
+ Process image
 
-\* Command line
+ Command line
 
-\## 4. Windows CMD Monitoring
+## 4. Windows CMD Monitoring
 
-\### Purpose
+### Purpose
 
 Identify Windows Command Shell activity.
 
-\### SPL
+### SPL
 
 ```spl id="u3k6pz"
 
 index=main sourcetype="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1 Image="\*cmd.exe\*"
 
 ```
-\### MITRE ATT\&CK
+### MITRE ATT\&CK
 
-\*\*T1059.003 — Windows Command Shell\*\*
+T1059.003 — Windows Command Shell
 
-\### Investigation
+### Investigation
 
 The process creation event can be examined to determine when CMD was executed and which user or parent process was associated with it.
 
-\## 5. Sysmon EventCode Statistic
+## 5. Sysmon EventCode Statistic
 
-\### Purpose
+### Purpose
 
 Understand the distribution of Sysmon event types.
 
-\### SPL
+### SPL
 
 ```spl id="j9v2lm"
 
@@ -130,32 +130,32 @@ index=main sourcetype="WinEventLog:Microsoft-Windows-Sysmon/Operational" | stats
 
 ```
 
-\### Use
+### Use
 
 This query helps identify which Sysmon EventCodes are being generated and collected.
 
-\## 6. Process Frequency Analysis
+## 6. Process Frequency Analysis
 
-\### Purpose
+### Purpose
 
 Identify frequently observed processes.
 
-\### SPL
+### SPL
 
 ```spl id="p4x7qb"
 
 index=main sourcetype="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1 | stats count by Image
 
 ```
-\### Investigation
+### Investigation
 
 This query can help establish an understanding of normal process activity within the lab.
 
 Processes that appear unexpectedly can be investigated further
 
-\## 7. Parent-Child Process Analysis
+## 7. Parent-Child Process Analysis
 
-\### Purpose
+### Purpose
 
 Analyze relationships between parent and child processes.
 
@@ -171,81 +171,80 @@ index=main sourcetype="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCo
 
 ```
 
-\### Investigation
+### Investigation
 
 Parent-child relationships help the analyst understand how a process was launched.
 
-\## 8. Windows Authentication Monitoring
+## 8. Windows Authentication Monitoring
 
-\### Purpose
+### Purpose
 
 Search for successful and failed Windows authentication events.
 
-\### SPL
+### SPL
 
 ```spl id="e2n9rk"
 
 index=main (EventCode=4624 OR EventCode=4625)
 
 ```
-\### Event IDs
+### Event IDs
 
-\* `4624` — Successful logon
+ `4624` — Successful logon
 
-\* `4625` — Failed logon
+ `4625` — Failed logon
 
-\## 9. Successful Logon Monitoring
+## 9. Successful Logon Monitoring
 
-\### Purpose
+### Purpose
 
 Search for successful Windows authentication events.
 
-\### SPL
+### SPL
 
 ```spl id="q7m4yd"
 
 index=main sourcetype="WinEventLog:Security" EventCode=4624
 
 ```
-
-\### Investigation
+### Investigation
 
 Useful fields can include:
 
-\* Timestamp
+ Timestamp
 
-\* Account
+ Account
 
-\* Logon Type
+ Logon Type
 
-\* Process
+ Process
 
-\* Computer
+ Computer
 
-\## 10. Failed Logon Monitoring
+## 10. Failed Logon Monitoring
 
-\### Purpose
+### Purpose
 
 Search for failed Windows authentication events.
 
-\### SPL
+### SPL
 
 ```spl id="v8t2ka"
 
 index=main sourcetype="WinEventLog:Security" EventCode=4625
 
 ```
-\### Investigation
+### Investigation
 
 Failed authentication events should be investigated in context rather than automatically treated as malicious.
 
-\## 11. Failed Logon Investigation
+## 11. Failed Logon Investigation
 
-\### Purpose
+### Purpose
 
 Display important fields from failed authentication events.
 
-\### SPL
+### SPL
 
 ```spl id="n5c8wf"
 
@@ -257,25 +256,25 @@ index=main sourcetype="WinEventLog:Security" EventCode=4625
 
 ```
 
-\### Important Fields
+### Important Fields
 
-\* `\_time`
+ `_time`
 
-\* `ComputerName`
+ `ComputerName`
 
-\* `Account\_Name`
+ `Account\_Name`
 
-\* `Logon\_Type`
+ `Logon\_Type`
 
-\* `Process\_Name`
+ `Process\_Name`
 
-\## 12. Failed Logon Statistics
+## 12. Failed Logon Statistics
 
-\### Purpose
+### Purpose
 
 Group failed authentication events by account and logon type.
 
-\### SPL
+### SPL
 
 ```spl id="k3p6rz"
 
@@ -284,17 +283,17 @@ index=main sourcetype="WinEventLog:Security" EventCode=4625
 | stats count by Account\_Name, Logon\_Type
 
 ```
-\### Use
+### Use
 
 This query provides a summarized view of failed authentication activity observed in the lab.
 
-\## 13. Main Process Investigation Query
+## 13. Main Process Investigation Query
 
-\### Purpose
+### Purpose
 
 Provide a compact view of important Process Creation fields.
 
-\### SPL
+### SPL
 
 ```spl id="s8y4mb"
 
@@ -305,11 +304,11 @@ index=main sourcetype="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCo
 | sort - \_time
 
 ```
-\### Use
+### Use
 
 This query is useful during manual investigation of process activity.
 
-\## 14. Process Investigation Workflow
+## 14. Process Investigation Workflow
 
 Process-related investigation follows:
 
@@ -321,7 +320,7 @@ Sysmon EventCode 1
 
 Identify Process
 
-    ↓
+      ↓
 
 Check User
 
@@ -347,7 +346,7 @@ Investigate Further
 
 ```
 
-\## 15. Authentication Investigation Workflow
+## 15. Authentication Investigation Workflow
 
 Authentication investigation follows:
 
@@ -367,7 +366,7 @@ Check Logon Type
 
 Check Process
 
-       ↓
+      ↓
 
 Check Timestamp
 
@@ -380,7 +379,7 @@ Validate Activity
 Document Finding
 
 ```
-\## 16. Query Reference
+## 16. Query Reference
 
 | Query                      | Purpose                       | Main Data          |
 
@@ -413,25 +412,25 @@ Document Finding
 | Main Process Investigation | Detailed process analysis     | Sysmon             |
 
 
-\## 17. Detection vs Investigation
+## 17. Detection vs Investigation
 
 Not every SPL query in this document is a detection rule.
 
 Queries are used for different purposes, including:
 
-\* Detection
+ Detection
 
-\* Investigation
+ Investigation
 
-\* Statistics
+ Statistics
 
-\* Baseline analysis
+ Baseline analysis
 
-\* Event validation
+ Event validation
 
 For example, the PowerShell query identifies PowerShell activity, while the parent-child process query provides additional context during investigation.
 
-\## 18. Detection vs Alerting
+## 18. Detection vs Alerting
 
 A detection search identifies security-relevant activity in collected telemetry.
 
@@ -439,29 +438,29 @@ An alert adds an automated notification or response when a defined condition is 
 
 In this project:
 
-\* Detection searches were implemented.
+ Detection searches were implemented.
 
-\* Dashboard monitoring was implemented.
+ Dashboard monitoring was implemented.
 
-\* Automated alert creation was not enabled in the current Splunk Free lab environment.
+ Automated alert creation was not enabled in the current Splunk Free lab environment.
 
 Therefore, this project does not claim automated alerting was implemented.
 
-\## 19. Query Safety
+## 19. Query Safety
 
 These SPL searches are read-only searches against indexed Splunk data.
 
 Running these queries does not:
 
-\* Modify Windows files
+ Modify Windows files
 
-\* Start or stop processes
+ Start or stop processes
 
-\* Delete events
+ Delete events
 
-\* Change Windows configuration
+ Change Windows configuration
 
-\* Execute commands on the Windows endpoint
+ Execute commands on the Windows endpoint
 
 The queries search and analyze telemetry that has already been collected.
 
