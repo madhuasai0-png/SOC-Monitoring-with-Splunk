@@ -367,15 +367,15 @@ SOC-Monitoring-with-Splunk/
 │
 ├── README.md
 │
-├── Config/
+├── config/
 │   ├── Splunk-Configuration.md
 │   ├── Sysmon-Configuration.md
 │   └── Windows-Event-Log-Configuration.md
 │
-├── Dashboard/
+├── dashboard/
 │   └── Dashboard-Documentation.md
 │
-├── Documentation/
+├── documentation/
 │   ├── Architecture.md
 │   ├── Attack-Simulation.md
 │   ├── Detection-Rules.md
@@ -384,10 +384,10 @@ SOC-Monitoring-with-Splunk/
 │   ├── Project-Overview.md
 │   └── Project-Walkthrough.md
 │
-├── Queries/
+├── queries/
 │   └── Detection-Queries.md
 │
-└── Screenshots/
+└── screenshots/
     ├── Failed-Logon/
     │   └── failed-logon-event.png
     │
