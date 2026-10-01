@@ -293,7 +293,7 @@ It supports **centralized monitoring**, security event analysis, investigation, 
 ![SMB Enumeration](screenshots/SMB-Enumeration/smb-enumeration-detection.png)
 
 ### Sysmon Process Creation
-![Sysmon Process Creation](screenshots/Sysmon-Event/sysmon-process-creation.png)
+![Sysmon Process Creation](screenshots/Sysmon-Events/sysmon-process-creation.png)
 
 ### Successful Logon Detection
 ![Successful Logon Detection](screenshots/Successful-Logon-4624/successful-logon-event.png)
