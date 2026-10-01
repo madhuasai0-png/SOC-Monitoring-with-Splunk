@@ -276,55 +276,27 @@ The SOC dashboard provides **centralized visibility** into security telemetry co
 
 It supports **centralized monitoring**, security event analysis, investigation, and visualization through Splunk.
 
-### Dashboard Overview
-
-![SOC Dashboard Overview](Screenshot/soc-dashboard/soc-dashboard-overview.png)
-
-### Alert Analysis
-
-![SOC Dashboard Alert Analysis](Screenshot/soc-dashboard/soc-dashboard-alerts.png)
-
-The dashboard provides visibility into security events and detection results, supporting investigation of suspicious activity across the monitored endpoint.
-
----
+![SOC Dashboard](screenshots/Splunk-Dashboard/splunk-dashboard.png)
 
 ## Detection Screenshots
 
 ### PowerShell Detection
-
-![PowerShell Detection](Screenshot/powershell-detection/powershell-command-detection.png)
-
-Sysmon Process Creation telemetry showing PowerShell activity detected and analyzed through Splunk.
+![PowerShell Detection](screenshots/PowerShell-Detection/powershell-command-detection.png)
 
 ### Failed Logon Detection
-
-![Failed Logon Detection](Screenshot/failed-logon/failed-logon-detection.png)
-
-Windows Security Event ID 4625 showing a controlled failed authentication attempt.
+![Failed Logon Detection](screenshots/Failed-Logon-4625/failed-logon-event.png)
 
 ### Nmap Scan Detection
-
-![Nmap Scan Detection](Screenshot/nmap-scan/nmap-scan-detection.png)
-
-Controlled Nmap scanning activity performed from the Kali Linux testing environment.
+![Nmap Scan Detection](screenshots/Nmap-Scan/nmap-network-scan.png)
 
 ### SMB Enumeration
-
-![SMB Enumeration Detection](Screenshot/smb-enumeration/smb-enumeration-detection.png)
-
-SMB enumeration activity generated during controlled security testing and analyzed through the monitoring workflow.
+![SMB Enumeration](screenshots/SMB-Enumeration/smb-enumeration-detection.png)
 
 ### Sysmon Process Creation
-
-![Sysmon Process Creation](Screenshot/sysmon-events/sysmon-process-creation.png)
-
-Sysmon Process Creation telemetry showing endpoint process activity collected by Splunk.
+![Sysmon Process Creation](screenshots/Sysmon-Event/sysmon-process-creation.png)
 
 ### Successful Logon Detection
-
-![Successful Logon Detection](Screenshot/successful-logon/successful-logon-detection.png)
-
-Windows Security Event ID 4624 showing a successful authentication event.
+![Successful Logon Detection](screenshots/Successful-Logon-4624/successful-logon-event.png)
 
 ---
 
