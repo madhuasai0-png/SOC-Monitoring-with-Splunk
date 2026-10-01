@@ -1,566 +1,494 @@
 # Home SOC Monitoring Lab with Splunk
 
-A hands-on Home Security Operations Center (SOC) monitoring lab built using Splunk Enterprise 10.4.0, Sysmon, Windows 11, Kali Linux, and VirtualBox.
+A hands-on cybersecurity lab designed to simulate a **Security Operations Center (SOC)** environment using **Splunk Enterprise** for centralized security monitoring, Windows event analysis, Sysmon telemetry, detection engineering, security investigation, and dashboard-based visualization.
 
-The project demonstrates how security telemetry can be collected from a Windows endpoint, analyzed using Splunk SPL queries, investigated as security events, and mapped to relevant MITRE ATT\&CK techniques.
-
-##  Project Overview
-
-This project simulates a basic SOC environment in a controlled virtual lab.
-
-The Windows 11 virtual machine acts as the monitored endpoint. Sysmon collects detailed process and system telemetry, while Splunk Enterprise acts as the SIEM platform for log collection, searching, analysis, and dashboard visualization.
-
-Kali Linux is used to perform authorized and controlled security-testing activities against the Windows lab environment.
-
-## SOC Workflow
+## Architecture
 
 ```text
-
+Kali Linux VM
+      ↓
+Controlled Security Testing
+      ↓
 Windows 11 VM
-
-    ↓
-
-  Sysmon
-
-    ↓
-
-Windows Event Logs
-
-    ↓
-
-  Splunk
-
-    ↓
-
- SPL Queries
-
-    ↓
-
- Detection
-
-    ↓
-
-Investigation
-
-    ↓
-
-Incident Response
-
-    ↓
-
-MITRE ATT\&CK Mapping
-
+      ↓
+Sysmon + Windows Security Logs
+      ↓
+Splunk Universal Forwarder
+      ↓
+Splunk Enterprise
+      ↓
+SOC Monitoring Dashboard
+      ↓
+Security Investigation
 ```
-## Project Objectives
 
- Collect Windows security and system telemetry.
+## Technologies
 
- Monitor Windows process creation.
+* Windows 11
+* Splunk Enterprise 10.4.0
+* Splunk Universal Forwarder
+* Sysmon
+* Kali Linux
+* VirtualBox
+* SPL
+* Windows Event Logs
+* MITRE ATT&CK
 
- Monitor PowerShell activity.
+## Key Features
 
- Monitor Windows Command Shell activity.
+* Centralized Windows security event monitoring
+* Sysmon-based process telemetry collection
+* PowerShell activity detection
+* Windows command-line activity detection
+* Successful and failed authentication monitoring
+* Process creation analysis
+* Windows Event ID analysis
+* Network reconnaissance analysis
+* SMB enumeration analysis
+* SMB protocol analysis
+* SPL-based security detection and investigation
+* SOC dashboard development
+* MITRE ATT&CK technique mapping
+* Structured security investigation workflow
 
- Monitor Windows authentication events.
+---
 
- Investigate successful and failed logon events.
+## Splunk Analysis Queries
 
- Perform controlled security testing using Kali Linux.
+The following **Splunk Search Processing Language (SPL)** queries were developed to support security monitoring, detection analysis, event investigation, and SOC dashboard visualization.
 
- Analyze security events using Splunk SPL.
-
- Build a SOC monitoring dashboard.
-
- Perform basic incident investigation and response.
-
- Map observed activities to MITRE ATT\&CK techniques.
-
- Document the complete SOC workflow.
-
-## Technologies Used
-
-| Technology               | Purpose                             |
-| ------------------------ | ----------------------------------- |
-| Windows 11               | Monitored endpoint                  |
-| Splunk Enterprise 10.4.4 | SIEM and log analysis               |
-| Sysmon                   | Windows security telemetry          |
-| Kali Linux               | Authorized security testing         |
-| VirtualBox               | Virtual lab environment             |
-| SPL                      | Detection and investigation queries |
-| MITRE ATT&CK             | Technique mapping                   |
-
-## Lab Architecture
-
-```text
-
-                  ┌─────────────────┐
-
-                  │   Kali Linux    │
-
-                  │  Security Test  │
-
-                  └────────┬────────┘
-
-                           │
-
-                           │ Authorized Testing
-
-                           ↓
-                   ┌─────────────────┐
-
-                   │    Windows 11   │
-
-                   │   Monitored VM  │
-
-                   └────────┬────────┘
-
-                            │
-
-                     │ Sysmon + Windows Events
-
-                            ↓
-                   ┌─────────────────┐
-
-                   │      Splunk     │
-
-                   │      SIEM       │
-
-                   └────────┬────────┘
-
-                            │
-                           
-                     │ SPL Queries
-
-                           ↓
-
-                  ┌─────────────────┐
-
-                  │ Detection \&     │
-
-                  │ Investigation   │
-
-                  └────────┬────────┘
-
-                           ↓
-
-                  ┌─────────────────┐
-
-                  │ Incident        │
-
-                  │ Response        │
-
-                  └────────┬────────┘
-
-                           ↓
-
-                  ┌─────────────────┐
-
-                   │ MITRE ATT\&CK    │
-
-                   │ Mapping         │
-
-                   └─────────────────┘
-
-```
-## Monitoring \& Detection
-
-The lab monitors several important Windows security activities.
-
-### Process Creation
-
-Sysmon EventCode 1 is used to monitor process creation events.
-
-Important fields include:
-
- Timestamp
-
- User
-
- Process Image
-
- Parent Process
-
- Command Line
-
-### PowerShell Monitoring
-
-PowerShell process activity is monitored using Sysmon telemetry and SPL queries.
-
-Example:
+### 1. PowerShell Process Monitoring
 
 ```spl
-
-index=main sourcetype="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1 Image="\*powershell\*"
-
-| table \_time User ParentImage CommandLine
-
+index=main sourcetype=XmlWinEventLog:Microsoft-Windows-Sysmon/Operational EventCode=1
+| search Image="*powershell.exe"
+| table _time Computer User Image ParentImage CommandLine
+| sort - _time
 ```
-### CMD Monitoring
 
-Windows Command Shell activity is monitored using Sysmon Process Creation events.
+Identifies PowerShell process creation events collected through Sysmon for security monitoring and investigation.
+
+### 2. CMD Process Monitoring
 
 ```spl
-
-index=main sourcetype="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1 Image="\*cmd.exe\*"
-
+index=main sourcetype=XmlWinEventLog:Microsoft-Windows-Sysmon/Operational EventCode=1
+| search Image="*cmd.exe"
+| table _time Computer User Image ParentImage CommandLine
+| sort - _time
 ```
-### Authentication Monitoring
 
-Windows Security Event IDs are monitored:
+Identifies Windows Command Shell process activity recorded by Sysmon.
 
- `4624` → Successful logon
+### 3. Process Creation Monitoring
 
- `4625` → Failed logon
+```spl
+index=main sourcetype=XmlWinEventLog:Microsoft-Windows-Sysmon/Operational EventCode=1
+| table _time Computer User Image ParentImage CommandLine
+| sort - _time
+```
 
-These events are investigated using account, logon type, process, and other available event fields.
+Provides visibility into process creation activity across the monitored Windows endpoint.
 
-## SOC Monitoring Dashboard
+### 4. Sysmon EventCode Monitoring
 
-A Splunk dashboard named `SOC Monitoring Dashboard` was created to provide centralized visibility into Windows security telemetry.
+```spl
+index=main sourcetype=XmlWinEventLog:Microsoft-Windows-Sysmon/Operational
+| stats count by EventCode
+| sort - count
+```
 
-The dashboard includes monitoring panels for:
+Summarizes the distribution of Sysmon event types received by Splunk.
 
- PowerShell Process Monitoring
+### 5. Successful Logon Monitoring
 
- CMD Process Monitoring
+```spl
+index=main sourcetype=WinEventLog:Security EventCode=4624
+| table _time Account_Name Logon_Type Source_Network_Address Workstation_Name
+| sort - _time
+```
 
- Process Creation Monitoring
+Provides visibility into successful Windows authentication events represented by Event ID 4624.
 
- Sysmon EventCode Monitoring
+### 6. Failed Logon Monitoring
 
-The dashboard provides a quick way for an analyst to review relevant security activity without manually running every query.
+```spl
+index=main sourcetype=WinEventLog:Security EventCode=4625
+| table _time Account_Name Logon_Type Source_Network_Address Workstation_Name
+| sort - _time
+```
 
-## Controlled Security Testing
+Identifies failed Windows authentication events represented by Event ID 4625 for subsequent security investigation.
 
-Security testing was performed only inside the authorized virtual lab environment.
+### 7. Windows Filtering Platform Event Investigation
 
-### Network Connectivity Test
+```spl
+index=main sourcetype=WinEventLog:Security
+| search EventCode=5152 OR EventCode=5157
+| table _time EventCode Account_Name Source_Address Source_Port Destination_Address Destination_Port Protocol
+| sort - _time
+```
+
+Investigates Windows Filtering Platform events associated with network connection activity.
+
+---
+
+## Security Testing
+
+The lab environment was subjected to controlled security testing from the Kali Linux VM against the monitored Windows 11 endpoint.
+
+### Nmap Network Scan
 
 ```bash
-
-ping -c 4 192.168.56.101
-
-```
-### Network Service Scanning
-
-```bash
-
 nmap -sT -Pn 192.168.56.101
-
 ```
 
-The scan identified services exposed by the Windows lab machine.
+A controlled Nmap scan was performed to generate network reconnaissance activity for monitoring and security analysis.
 
-### SMB Share Enumeration
+The Windows endpoint exposed:
+
+* TCP 135
+* TCP 139
+* TCP 445
+* TCP 5432
+* TCP 8000
+* TCP 8089
+
+The resulting activity was reviewed using Windows security telemetry and Splunk searches.
+
+### SMB Enumeration
 
 ```bash
-
 smbclient -L //192.168.56.101 -N
-
 ```
-Anonymous SMB access was denied by the Windows environment.
 
-### SMB Protocol Enumeration
+A controlled SMB share enumeration attempt was performed against the Windows endpoint.
+
+The endpoint returned:
+
+```text
+NT_STATUS_ACCESS_DENIED
+```
+
+The result was retained as part of the security investigation and lab validation.
+
+### SMB Protocol Detection
 
 ```bash
-
 nmap -p 445 --script smb-protocols 192.168.56.101
-
 ```
-### Splunk HTTP Verification
+
+The command was used to identify SMB protocol versions supported by the monitored Windows endpoint.
+
+### HTTP Service Testing
 
 ```bash
-
 curl -I http://192.168.56.101:8000
-
 ```
-### PowerShell Detection Test
 
-```powershell
+A controlled HTTP request was generated to validate network activity visibility within the lab environment.
 
-Write-Host "SOC Detection Test"
+---
 
-```
-### CMD Detection Test
+## Authentication Testing
 
-```cmd
+Windows authentication telemetry was validated using controlled authentication activity.
 
-echo SOC\_CMD\_TEST
-
-```
-### Authentication Test
-
-A controlled incorrect-password attempt was performed on the Windows VM to generate a 4625 failed logon event, followed by a successful login.
-
-## MITRE ATT\&CK Mapping
-
-The following techniques were mapped based on activities actually performed in the lab.
-
-| Activity | MITRE ATT&CK Technique |
-| --- | --- |
-| PowerShell execution | T1059.001 – PowerShell |
-| Windows Command Shell | T1059.003 – Windows Command Shell |
-| Nmap network scanning | T1046 – Network Service Scanning |
-| SMB share enumeration | T1135 – Network Share Discovery |
-
-Authentication events such as 4624 and 4625 were treated as security telemetry for investigation.
-
-The single controlled failed-login test was not classified as brute-force activity.
-
-## Incident Response Workflow
-
-The project follows a basic SOC incident-response workflow:
+### Successful Authentication
 
 ```text
-
-1\. Identify
-
-    ↓
-
-2\. Investigate
-
-     ↓
-
-3\. Validate
-
-     ↓
-
-4\. Respond
-
-     ↓
-
-5\. Document
-
+4624
 ```
-### Identify
 
-Detect potentially relevant activity using Splunk searches.
+Event ID 4624 was used to validate the collection and analysis of successful Windows authentication events.
 
-### Investigate
-
-Review:
-
- Timestamp
-
- User
-
- Process
-
- Parent Process
-
- Command Line
-
- EventCode
-
- Logon Type
-
-### Validate
-
-Determine whether the activity is expected, controlled testing, or potentially suspicious.
-
-### Respond
-
-Document the activity and determine appropriate response actions within the lab environment.
-
-### Document
-
-Record findings, evidence, detection queries, and MITRE ATT\&CK mappings.
-
-## Detection vs Alerting
-
-This project demonstrates detection and investigation using Splunk SPL.
-
-Detection searches identify relevant security events from collected telemetry.
-
-Example:
+### Failed Authentication
 
 ```text
-
-PowerShell process detected
-
-      ↓
-
-Splunk SPL search
-
-      ↓
-
-Event returned
-
-      ↓
-
-Analyst investigates
-
+4625
 ```
-Automated alert creation was not enabled in the current Splunk Free lab environment.
 
-Therefore, this project does not claim automated alerting or notification functionality.
+A controlled incorrect-password attempt was generated to validate failed authentication event collection.
+
+The test consisted of a single controlled authentication failure and was **not intended to simulate a brute-force attack**.
+
+---
+
+## MITRE ATT&CK Mapping
+
+| Detection Activity            | MITRE ATT&CK Technique                                   | Technique ID |
+| ----------------------------- | -------------------------------------------------------- | ------------ |
+| PowerShell activity           | Command and Scripting Interpreter: PowerShell            | T1059.001    |
+| Windows command-line activity | Command and Scripting Interpreter: Windows Command Shell | T1059.003    |
+| Nmap network scanning         | Network Service Scanning                                 | T1046        |
+| SMB enumeration               | Network Share Discovery                                  | T1135        |
+
+The mapped activities demonstrate how selected security monitoring and controlled testing scenarios can be aligned with relevant MITRE ATT&CK techniques.
+
+Authentication events are monitored for security investigation; however, Event IDs 4624 and 4625 alone are not mapped to **Valid Accounts (T1078)** because the available evidence does not establish use of compromised or otherwise valid credentials as an adversary technique.
+
+---
+
+## Incident Investigation Workflow
+
+```text
+Security Activity
+       ↓
+Windows / Sysmon Telemetry
+       ↓
+Splunk Log Collection
+       ↓
+Detection Query
+       ↓
+Security Investigation
+       ↓
+Activity Validation
+       ↓
+Finding Documentation
+```
+
+## Project Flow
+
+```text
+Kali Linux
+     ↓
+Controlled Security Testing
+     ↓
+Windows 11
+     ↓
+Sysmon / Windows Security Logs
+     ↓
+Splunk Universal Forwarder
+     ↓
+Splunk Enterprise
+     ↓
+SPL Detection Queries
+     ↓
+SOC Monitoring Dashboard
+     ↓
+Security Analysis
+```
+
+---
+
+## SOC Dashboard
+
+The SOC dashboard provides **centralized visibility** into security telemetry collected from the monitored Windows endpoint.
+
+It supports **centralized monitoring**, security event analysis, investigation, and visualization through Splunk.
+
+### Dashboard Overview
+
+![SOC Dashboard Overview](Screenshot/soc-dashboard/soc-dashboard-overview.png)
+
+### Alert Analysis
+
+![SOC Dashboard Alert Analysis](Screenshot/soc-dashboard/soc-dashboard-alerts.png)
+
+The dashboard provides visibility into security events and detection results, supporting investigation of suspicious activity across the monitored endpoint.
+
+---
+
+## Detection Screenshots
+
+### PowerShell Detection
+
+![PowerShell Detection](Screenshot/powershell-detection/powershell-command-detection.png)
+
+Sysmon Process Creation telemetry showing PowerShell activity detected and analyzed through Splunk.
+
+### Failed Logon Detection
+
+![Failed Logon Detection](Screenshot/failed-logon/failed-logon-detection.png)
+
+Windows Security Event ID 4625 showing a controlled failed authentication attempt.
+
+### Nmap Scan Detection
+
+![Nmap Scan Detection](Screenshot/nmap-scan/nmap-scan-detection.png)
+
+Controlled Nmap scanning activity performed from the Kali Linux testing environment.
+
+### SMB Enumeration
+
+![SMB Enumeration Detection](Screenshot/smb-enumeration/smb-enumeration-detection.png)
+
+SMB enumeration activity generated during controlled security testing and analyzed through the monitoring workflow.
+
+### Sysmon Process Creation
+
+![Sysmon Process Creation](Screenshot/sysmon-events/sysmon-process-creation.png)
+
+Sysmon Process Creation telemetry showing endpoint process activity collected by Splunk.
+
+### Successful Logon Detection
+
+![Successful Logon Detection](Screenshot/successful-logon/successful-logon-detection.png)
+
+Windows Security Event ID 4624 showing a successful authentication event.
+
+---
+
+## Detection and Alerting
+
+Splunk serves as the centralized platform for collecting, searching, analyzing, and investigating Windows and Sysmon security telemetry.
+
+Detection searches were developed for:
+
+* PowerShell process activity
+* Windows Command Shell activity
+* Process creation
+* Successful authentication
+* Failed authentication
+* Sysmon event activity
+* Network security activity
+
+The current implementation focuses on **detection searches, security investigation, and SOC dashboard monitoring**.
+
+Automated Splunk alert notifications are **not enabled in the current Splunk Free license environment**.
+
+---
+
+## Lab Environment
+
+The project was developed and validated within an isolated VirtualBox-based virtual lab.
+
+### Lab Architecture
+
+```text
+Kali Linux VM
+      │
+      │ Controlled Security Testing
+      ↓
+Windows 11 VM
+├── Sysmon
+├── Windows Security Logs
+├── Splunk Universal Forwarder
+└── Splunk Enterprise
+        │
+        ↓
+   SOC Dashboard
+```
+
+### Windows Endpoint
+
+```text
+IP Address: 192.168.56.101
+```
+
+The Windows 11 VM served as the monitored endpoint and Splunk Enterprise host.
+
+### Security Testing Host
+
+The Kali Linux VM was used to generate controlled security activity, including:
+
+* Nmap network scanning
+* SMB enumeration
+* SMB protocol analysis
+* HTTP service testing
+
+---
 
 ## Project Structure
 
 ```text
-
 SOC-Monitoring-with-Splunk/
-
 │
-
 ├── README.md
-
 │
-
 ├── Config/
-
 │   ├── Splunk-Configuration.md
-
 │   ├── Sysmon-Configuration.md
-
 │   └── Windows-Event-Log-Configuration.md
-
 │
-
 ├── Dashboard/
-
 │   └── Dashboard-Documentation.md
-
 │
-
 ├── Documentation/
-
-│   ├── Project-Overview.md
-
 │   ├── Architecture.md
-
-│   ├── Project-Walkthrough.md
-
-│   ├── MITRE-ATTACK-Mapping.md
-
+│   ├── Attack-Simulation.md
 │   ├── Detection-Rules.md
-
 │   ├── Incident-Response.md
-
-│   └── Attack-Simulation.md
-
+│   ├── MITRE-ATTACK-Mapping.md
+│   ├── Project-Overview.md
+│   └── Project-Walkthrough.md
 │
-
 ├── Queries/
-
 │   └── Detection-Queries.md
-
 │
-
 └── Screenshot/
-
+    ├── failed-logon/
+    │   └── failed-logon-detection.png
+    │
+    ├── nmap-scan/
+    │   └── nmap-scan-detection.png
+    │
+    ├── powershell-detection/
+    │   └── powershell-command-detection.png
+    │
+    ├── smb-enumeration/
+    │   └── smb-enumeration-detection.png
+    │
+    ├── soc-dashboard/
+    │   ├── soc-dashboard-overview.png
+    │   └── soc-dashboard-alerts.png
+    │
+    ├── successful-logon/
+    │   └── successful-logon-detection.png
+    │
+    └── sysmon-events/
+        └── sysmon-process-creation.png
 ```
-## Security \& Lab Scope
 
-All testing was performed in an isolated and authorized virtual environment.
+---
 
-The project does not involve:
+## Skills Demonstrated
 
- Unauthorized systems
+* Security Operations Center (SOC) Monitoring
+* Security Information and Event Management (SIEM)
+* Splunk Enterprise
+* Splunk Universal Forwarder
+* Sysmon
+* SPL Query Development
+* Windows Event Log Analysis
+* Security Event Investigation
+* Process Monitoring
+* Authentication Monitoring
+* Network Security Monitoring
+* Nmap Reconnaissance Analysis
+* SMB Enumeration Analysis
+* MITRE ATT&CK Mapping
+* SOC Dashboard Development
+* Incident Investigation
 
- Malware deployment
- 
- Credential theft
+---
 
- Destructive attacks
+## Limitations
 
- Data exfiltration
+* The project was developed and validated within a controlled virtual lab environment.
+* Detection coverage depends on the configured Windows and Sysmon telemetry sources.
+* Individual security events require contextual analysis before being classified as malicious or benign.
+* Legitimate administrative or system activity may generate events requiring additional validation.
+* Automated Splunk alert notifications are not enabled in the current Splunk Free license environment.
+* The implementation does not represent a production-scale SOC deployment.
 
- Persistence against real systems
-
-The Kali Linux activities were limited to controlled security-testing exercises against the Windows lab VM.
-
-## Screenshots
-
-Screenshots documenting the Splunk dashboard, detections, investigations, and lab activities are available in the:
-
-```text
-
-Screenshot/
-
-```
-directory.
-
-## Documentation
-
-Detailed documentation is available in the following directories:
-
- `Config/` → Environment and configuration documentation
-
- `Dashboard/` → Splunk dashboard documentation
-
- `Documentation/` → Project, architecture, detection, attack simulation, incident response, and MITRE documentation
-
- `Queries/` → Splunk SPL detection and investigation queries
-
- `Screenshot/` → Project evidence and screenshots
+---
 
 ## Future Improvements
 
-Possible future enhancements include:
+* Expand Sysmon-based detection coverage.
+* Integrate additional Windows security telemetry.
+* Develop correlation searches for related security events.
+* Implement automated alert notifications when supported by the SIEM environment.
+* Integrate threat intelligence feeds.
+* Expand MITRE ATT&CK technique coverage.
+* Develop additional SOC investigation dashboards.
+* Implement automated incident-response workflows.
+* Correlate endpoint and network telemetry.
 
- Automated alerting and notification
-
- Additional Sysmon event monitoring
-
- More Windows authentication detections
-
- Additional MITRE ATT\&CK mappings
-
- More advanced correlation rules
-
- Linux log monitoring
-
- Threat-intelligence integration
-
- Automated incident-response workflows
+---
 
 ## Project Outcome
 
-This Home SOC project demonstrates a practical security-monitoring workflow:
+This project provided practical experience in **SOC monitoring, SIEM implementation, Windows security telemetry analysis, Sysmon-based detection, SPL development, network reconnaissance analysis, authentication monitoring, MITRE ATT&CK mapping, and security investigation**.
 
-```text
-
-Collect
-
- ↓
-
-Index
-
- ↓
-
-Search
-
- ↓
-
-Detect
-
- ↓
-
-Investigate
-
- ↓
-
-Validate
-
- ↓
-
-Document
-
- ↓
-
-Map to MITRE ATT\&CK
-
-```
-The project provides hands-on experience with SIEM monitoring, Windows telemetry, Sysmon, SPL detection, security investigation, controlled attack simulation, incident response, and MITRE ATT\&CK mapping.
-
-## Author
-
-Cybersecurity Student | Aspiring SOC Analyst
-
-
-
-This project was developed as a hands-on cybersecurity portfolio project to demonstrate practical SOC monitoring and security-analysis skills.
-
-
-
+The lab demonstrates an end-to-end security monitoring workflow in which endpoint telemetry is collected through Splunk, analyzed using SPL-based detection searches, investigated within the SIEM, and presented through a centralized SOC dashboard for investigation.
