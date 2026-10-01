@@ -387,27 +387,27 @@ SOC-Monitoring-with-Splunk/
 ├── Queries/
 │   └── Detection-Queries.md
 │
-└── Screenshot/
-    ├── failed-logon/
-    │   └── failed-logon-detection.png
+└── Screenshots/
+    ├── Failed-Logon/
+    │   └── failed-logon-event.png
     │
-    ├── nmap-scan/
-    │   └── nmap-scan-detection.png
+    ├── Nmap-Scan/
+    │   └── nmap-network-scan.png
     │
-    ├── powershell-detection/
+    ├── Powershell-Detection/
     │   └── powershell-command-detection.png
     │
-    ├── smb-enumeration/
+    ├── SMB-Enumeration/
     │   └── smb-enumeration-detection.png
     │
-    ├── soc-dashboard/
-    │   ├── soc-dashboard-overview.png
-    │   └── soc-dashboard-alerts.png
+    ├── Splunk-Dashboard/
+    │   ├── splunk-dashboard.png
+    │   
     │
-    ├── successful-logon/
-    │   └── successful-logon-detection.png
+    ├── Successful-Logon/
+    │   └── successful-logon-event.png
     │
-    └── sysmon-events/
+    └── Sysmon-Events/
         └── sysmon-process-creation.png
 ```
 
