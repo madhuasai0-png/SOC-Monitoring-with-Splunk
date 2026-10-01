@@ -284,7 +284,7 @@ It supports **centralized monitoring**, security event analysis, investigation, 
 ![PowerShell Detection](screenshots/PowerShell-Detection/powershell-command-detection.png)
 
 ### Failed Logon Detection
-![Failed Logon Detection](screenshots/Failed-Logon-4625/failed-logon-event.png)
+![Failed Logon Detection](screenshots/Failed-Logon/failed-logon-event.png)
 
 ### Nmap Scan Detection
 ![Nmap Scan Detection](screenshots/Nmap-Scan/nmap-network-scan.png)
